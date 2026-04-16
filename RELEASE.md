@@ -1,8 +1,10 @@
 # Releasing
 
+1. `nix-shell -p uv`
 1. `git pull origin main`
 1. Bump `version` in `pyproject.toml`.
-1. `make all`
+1. `uv sync`
+1. `make tests`
 1. `export VERSION=<new version>`
 1. `git ci -am "release $VERSION"`
 1. `git push origin main` and wait for CI to pass.
