@@ -1,6 +1,6 @@
 [project]
 name = "pyramid-jwt2"
-version = "1.0.0"
+version = "1.0.1"
 description = "JWT authentication security policy for Pyramid 2.0+"
 readme = "README.md"
 requires-python = ">=3.11"
