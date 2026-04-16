@@ -86,7 +86,7 @@ class JWTSecurityPolicy:
             return None
 
         # Store claims on request for later access
-        request.jwt_claims = claims
+        request.jwt_claims = claims  # ty: ignore[unresolved-attribute]
 
         userid = claims.get("sub")
         if not userid:
@@ -177,7 +177,7 @@ def create_jwt_token(
         expiration: Token expiration timedelta
         **claims: Additional claims to include in token
     """
-    policy = request.registry.queryUtility(ISecurityPolicy)
+    policy = request.registry.queryUtility(ISecurityPolicy)  # ty: ignore[unresolved-attribute]
     if not isinstance(policy, JWTSecurityPolicy):
         msg = "JWTSecurityPolicy not configured"
         raise TypeError(msg)
@@ -208,7 +208,7 @@ def jwt_claims_from_token(request: Request, token: str) -> dict[str, t.Any]:
     Raises:
         jwt.InvalidTokenError: If token is invalid or expired
     """
-    policy = request.registry.queryUtility(ISecurityPolicy)
+    policy = request.registry.queryUtility(ISecurityPolicy)  # ty: ignore[unresolved-attribute]
     if not isinstance(policy, JWTSecurityPolicy):
         msg = "JWTSecurityPolicy not configured"
         raise TypeError(msg)

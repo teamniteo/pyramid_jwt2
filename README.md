@@ -7,7 +7,8 @@
 
 JWT authentication security policy for Pyramid 2.0+.
 
-This package provides a modern, type-safe JWT authentication implementation for Pyramid web framework, replacing the deprecated `pyramid_jwt` package with native Pyramid 2.0 security policies.
+This package provides a modern, type-safe JWT authentication implementation for Pyramid web framework, an alternative to the existing `pyramid_jwt` for users using Pyramid 2.0's unified security policy.
+
 
 ## Features
 
@@ -130,11 +131,11 @@ from pyramid.authorization import Allow, Authenticated
 
 class RootFactory:
     def __init__(self, request):
-        self.user = request.user
+        self.request = request
 
     @property
     def __acl__(self):
-        if self.user:
+        if self.request.identity:
             # Grant permissions using Authenticated principal
             return [
                 (Allow, Authenticated, 'view'),
@@ -169,7 +170,7 @@ Add custom principals like roles for cleaner ACLs:
 def load_user(userid, request):
     return request.db.query(User).filter(User.id == userid).first()
 
-def add_role_principals(request, user: User, claims: dict) -> set[str]:
+def add_role_principals(request, user: User) -> set[str]:
     """Add role-based principals."""
     principals = set()
 
@@ -211,7 +212,7 @@ class RootFactory:
   - Return `True` if token is valid, `False` if invalid
   - Receives user object from user_loader
   - Use for logout timestamps, banned users, etc.
-- **`additional_principals`** (callable, optional): Function `(user, request, claims) -> set[str]`
+- **`additional_principals`** (callable, optional): Function `(request, user) -> set[str]`
   - Returns additional principals to add (e.g., `{"role:admin"}`)
   - Enables clean role-based ACLs
 
@@ -222,8 +223,9 @@ class RootFactory:
 After configuration, these methods are available on the request object:
 
 - **`request.create_jwt_token(userid, expiration=None, **claims)`**: Create a JWT token
+- **`request.jwt_claims_from_token(token)`**: Decode and validate an arbitrary token, returning its claims. Raises `jwt.InvalidTokenError` if the token is invalid or expired
 - **`request.authenticated_userid`**: Get the authenticated user ID
-- **`request.jwt_claims`**: Access decoded JWT claims
+- **`request.jwt_claims`**: Access decoded JWT claims. Only populated after `request.identity` has been resolved and the token decoded successfully
 - **`request.identity`**: Get identity dict with:
   - `userid`: User ID from token
   - `claims`: Decoded JWT claims
@@ -234,7 +236,7 @@ After configuration, these methods are available on the request object:
 JWT is stateless, meaning authentication doesn't use cookies or sessions. Therefore:
 
 - **`remember()`** raises `NotImplementedError` - use `create_jwt_token()` instead
-- **`forget()`** raises `NotImplementedError` - handle logout via `validation_callback`
+- **`forget()`** raises `NotImplementedError` - handle logout via `custom_token_validation`
 
 ## Requirements
 

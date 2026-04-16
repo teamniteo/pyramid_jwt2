@@ -16,6 +16,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Internet :: WWW/HTTP :: WSGI",
   "Typing :: Typed",
@@ -28,6 +29,7 @@ dev = [
   "pytest>=8.0",
   "pytest-cov>=4.0",
   "ruff>=0.8",
+  "ty>=0.0.31",
 ]
 
 [project.urls]

@@ -11,11 +11,9 @@ check:
 	@uv run ruff check .
 	@uv run ruff format --check .
 
-# Backwards compatibility
 .PHONY: types
-types: check
-.PHONY: lint
-lint: check
+types:
+	@uv run ty check --error-on-warning pyramid_jwt2
 
 # anything, in regex-speak
 filter = "."
@@ -39,7 +37,7 @@ ifeq ($(full_suite),"false")
 endif
 full_suite_args = ""
 ifeq ($(full_suite),"true")
-	full_suite_args = --durations 10 --cov=pyramid_jwt2 --cov-branch --cov-report html --cov-report xml:cov.xml --cov-report term-missing --cov-fail-under=100
+	full_suite_args = --cov=pyramid_jwt2 --cov-branch --cov-report html --cov-report xml:cov.xml --cov-report term-missing --cov-fail-under=100
 endif
 
 .PHONY: unit
@@ -51,7 +49,7 @@ else
 endif
 
 .PHONY: tests
-tests: check unit
+tests: check types unit
 
 .PHONY: test
 test: tests
