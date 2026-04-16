@@ -1,0 +1,66 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  test:
+    name: "Python ${{ matrix.python-version }}"
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - run: uv sync --dev
+
+      - run: make check
+
+      - run: make unit
+
+  publish:
+    name: "Publish to PyPI"
+    needs: test
+    runs-on: ubuntu-latest
+
+    environment: pypi
+
+    permissions:
+      id-token: write    # PyPI Trusted Publishing (OIDC)
+      contents: write    # softprops/action-gh-release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.13"
+
+      - name: Verify git tag matches pyproject.toml version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION=$(uv run --with tomli python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          echo "tag=$TAG version=$VERSION"
+          [[ "$TAG" == "$VERSION" ]] || { echo "Tag/version mismatch"; exit 1; }
+
+      - run: uv build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          make_latest: true

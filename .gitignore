@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Build artifacts
+build/
+dist/
+*.whl
+*.tar.gz
+
+# uv / venv
+.venv/
+.python-version
+
+# Test + coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+cov.xml
+junit.xml
+
+# Ruff
+.ruff_cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
