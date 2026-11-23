@@ -16,9 +16,9 @@ jobs:
         python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v5.4.2
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true
@@ -43,9 +43,9 @@ jobs:
       contents: write    # softprops/action-gh-release
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v5.4.2
         with:
           python-version: "3.13"
 
@@ -62,7 +62,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.6.2
         with:
           generate_release_notes: true
           make_latest: true
